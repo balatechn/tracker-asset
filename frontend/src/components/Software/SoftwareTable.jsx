@@ -71,7 +71,7 @@ export default function SoftwareTable({
   return (
     <div className="card overflow-hidden">
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row gap-3 p-4 border-b border-gray-100">
+      <div className="flex flex-col sm:flex-row gap-2 p-3 border-b border-gray-100">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input

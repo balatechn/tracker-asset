@@ -68,7 +68,7 @@ export default function DomainsPage() {
   const canEdit = user?.role !== 'viewer';
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -76,7 +76,7 @@ export default function DomainsPage() {
             <Globe className="w-5 h-5 text-brand-700" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Domain Tracker</h1>
+            <h1 className="text-base font-bold text-gray-900">Domain Tracker</h1>
             <p className="text-sm text-gray-500">
               {data?.pagination?.total ?? '—'} domains tracked
             </p>
