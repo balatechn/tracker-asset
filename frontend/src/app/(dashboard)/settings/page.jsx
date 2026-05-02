@@ -2,13 +2,12 @@
 import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuth } from '@/context/AuthContext';
 import { Settings, Mail, Server, Send, CheckCircle, XCircle, Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { clsx } from 'clsx';
-import { redirect } from 'next/navigation';
 
 export default function SettingsPage() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const [testMsg, setTestMsg] = useState(null);
   const [showUser, setShowUser] = useState(false);
 

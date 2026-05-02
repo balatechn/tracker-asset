@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuth } from '@/context/AuthContext';
 import {
   Bell, Globe, Package, Mail, Filter, Send, ChevronDown,
   AlertTriangle, Clock, CheckCircle,
@@ -37,7 +37,7 @@ const DAYS_OPTIONS = [
 ];
 
 export default function AlertsPage() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
   const [typeFilter, setTypeFilter] = useState('all');
