@@ -12,6 +12,7 @@ const domainRoutes = require('./routes/domain.routes');
 const softwareRoutes = require('./routes/software.routes');
 const auditRoutes = require('./routes/audit.routes');
 const { startAlertJob } = require('./utils/alertJob');
+const { initDb } = require('./db/init');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -62,8 +63,9 @@ app.use((err, _req, res, _next) => {
 });
 
 // ── Start Server ──────────────────────────────────────────────
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Tracker API running on port ${PORT}`);
+  await initDb();
   startAlertJob();
 });
 
