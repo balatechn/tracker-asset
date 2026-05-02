@@ -51,7 +51,7 @@ export default function Header() {
         {/* Alerts Bell */}
         <div className="relative">
           <button
-            onClick={() => router.push('/dashboard')}
+            onClick={() => router.push('/alerts')}
             className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             title={`${alertCount} alerts`}
           >

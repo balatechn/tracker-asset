@@ -11,6 +11,7 @@ const dashboardRoutes = require('./routes/dashboard.routes');
 const domainRoutes = require('./routes/domain.routes');
 const softwareRoutes = require('./routes/software.routes');
 const auditRoutes = require('./routes/audit.routes');
+const settingsRoutes = require('./routes/settings.routes');
 const { startAlertJob } = require('./utils/alertJob');
 const { initDb } = require('./db/init');
 
@@ -50,6 +51,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/domains', domainRoutes);
 app.use('/api/software', softwareRoutes);
 app.use('/api/audit', auditRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // ── Health Check ──────────────────────────────────────────────
 app.get('/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));

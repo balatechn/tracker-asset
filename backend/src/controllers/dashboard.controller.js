@@ -71,12 +71,14 @@ const getAlerts = async (req, res, next) => {
 
     const { rows } = await pool.query(`
       SELECT 'domain' AS type, domain_name AS name, registrar AS vendor,
-             expiry_date, criticality, (expiry_date - CURRENT_DATE) AS days_remaining
+             expiry_date, criticality, (expiry_date - CURRENT_DATE) AS days_remaining,
+             finance_email, admin_email, vendor_email, owner
       FROM   domains
       WHERE  is_active = true AND expiry_date BETWEEN $1 AND $2
       UNION ALL
       SELECT 'software', product_name, vendor,
-             expiry_date, criticality, (expiry_date - CURRENT_DATE)
+             expiry_date, criticality, (expiry_date - CURRENT_DATE),
+             NULL AS finance_email, NULL AS admin_email, NULL AS vendor_email, NULL AS owner
       FROM   software_licenses
       WHERE  is_active = true AND expiry_date BETWEEN $1 AND $2
       ORDER  BY days_remaining ASC

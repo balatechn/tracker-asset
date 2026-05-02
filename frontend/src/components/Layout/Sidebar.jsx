@@ -2,21 +2,37 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { LayoutDashboard, Globe, Monitor, FileText, LogOut, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/lib/api';
+import {
+  LayoutDashboard, Globe, Monitor, FileText, LogOut, Shield,
+  ChevronLeft, ChevronRight, ChevronDown, Bell, Settings, Users,
+  List, AlignLeft, CalendarDays,
+} from 'lucide-react';
 import { useState } from 'react';
 import { clsx } from 'clsx';
-
-const NAV_ITEMS = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/domains', icon: Globe, label: 'Domains' },
-  { href: '/software', icon: Monitor, label: 'Software & Licenses' },
-  { href: '/audit', icon: FileText, label: 'Audit Logs' },
-];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const [collapsed, setCollapsed] = useState(true);
+  const [domainsOpen, setDomainsOpen] = useState(true);
+
+  const { data: alertsData } = useQuery({
+    queryKey: ['dashboard-alerts'],
+    queryFn: () => api.get('/dashboard/alerts').then(r => r.data),
+    refetchInterval: 120000,
+  });
+  const alertCount = alertsData?.alerts?.length || 0;
+
+  const isActive = (href) => pathname === href || pathname.startsWith(href + '/');
+
+  const navLinkCls = (href) => clsx(
+    'flex items-center gap-2.5 px-2 py-1.5 rounded-md text-xs font-medium transition-colors',
+    isActive(href)
+      ? 'bg-brand-700 text-white'
+      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+  );
 
   return (
     <aside className={clsx(
@@ -44,26 +60,90 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-2 space-y-0.5 px-1.5">
-        {NAV_ITEMS.map(({ href, icon: Icon, label }) => {
-          const active = pathname === href || pathname.startsWith(href + '/');
-          return (
-            <Link
-              key={href}
-              href={href}
-              title={label}
-              className={clsx(
-                'flex items-center gap-2.5 px-2 py-1.5 rounded-md text-xs font-medium transition-colors',
-                active
-                  ? 'bg-brand-700 text-white'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-              )}
-            >
-              <Icon className="w-4 h-4 shrink-0" />
-              {!collapsed && <span className="truncate">{label}</span>}
-            </Link>
-          );
-        })}
+      <nav className="flex-1 py-2 space-y-0.5 px-1.5 overflow-y-auto">
+        {/* Dashboard */}
+        <Link href="/dashboard" title="Dashboard" className={navLinkCls('/dashboard')}>
+          <LayoutDashboard className="w-4 h-4 shrink-0" />
+          {!collapsed && <span className="truncate">Dashboard</span>}
+        </Link>
+
+        {/* Domains — collapsible group */}
+        <div>
+          <button
+            onClick={() => !collapsed && setDomainsOpen(o => !o)}
+            title="Domains"
+            className={clsx(
+              'flex items-center gap-2.5 px-2 py-1.5 rounded-md text-xs font-medium transition-colors w-full',
+              isActive('/domains')
+                ? 'bg-brand-700 text-white'
+                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+            )}
+          >
+            <Globe className="w-4 h-4 shrink-0" />
+            {!collapsed && (
+              <>
+                <span className="truncate flex-1 text-left">Domains</span>
+                <ChevronDown className={clsx('w-3 h-3 transition-transform', domainsOpen && 'rotate-180')} />
+              </>
+            )}
+          </button>
+          {!collapsed && domainsOpen && (
+            <div className="ml-5 mt-0.5 space-y-0.5 border-l border-slate-700 pl-2">
+              <Link href="/domains" title="All Domains" className={clsx(
+                'flex items-center gap-2 px-2 py-1 rounded text-[11px] font-medium transition-colors',
+                pathname === '/domains' ? 'text-brand-300' : 'text-slate-400 hover:text-white'
+              )}>
+                <List className="w-3 h-3 shrink-0" /> All Domains
+              </Link>
+              <Link href="/domains/timeline" title="Timeline View" className={clsx(
+                'flex items-center gap-2 px-2 py-1 rounded text-[11px] font-medium transition-colors',
+                pathname === '/domains/timeline' ? 'text-brand-300' : 'text-slate-400 hover:text-white'
+              )}>
+                <AlignLeft className="w-3 h-3 shrink-0" /> Timeline View
+              </Link>
+              <Link href="/domains/calendar" title="Calendar View" className={clsx(
+                'flex items-center gap-2 px-2 py-1 rounded text-[11px] font-medium transition-colors',
+                pathname === '/domains/calendar' ? 'text-brand-300' : 'text-slate-400 hover:text-white'
+              )}>
+                <CalendarDays className="w-3 h-3 shrink-0" /> Calendar View
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Licenses */}
+        <Link href="/software" title="Licenses" className={navLinkCls('/software')}>
+          <Monitor className="w-4 h-4 shrink-0" />
+          {!collapsed && <span className="truncate">Licenses</span>}
+        </Link>
+
+        {/* Alerts */}
+        <Link href="/alerts" title="Alerts" className={clsx(navLinkCls('/alerts'), 'relative')}>
+          <Bell className="w-4 h-4 shrink-0" />
+          {!collapsed && <span className="truncate flex-1">Alerts</span>}
+          {alertCount > 0 && (
+            <span className={clsx(
+              'bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center',
+              collapsed ? 'absolute -top-0.5 -right-0.5 w-4 h-4' : 'w-4 h-4 shrink-0'
+            )}>
+              {alertCount > 9 ? '9+' : alertCount}
+            </span>
+          )}
+        </Link>
+
+        {/* Audit Logs */}
+        <Link href="/audit" title="Audit Logs" className={navLinkCls('/audit')}>
+          <FileText className="w-4 h-4 shrink-0" />
+          {!collapsed && <span className="truncate">Audit Logs</span>}
+        </Link>
+
+        {/* Settings (admin only) */}
+        {user?.role === 'admin' && (
+          <Link href="/settings" title="Settings" className={navLinkCls('/settings')}>
+            <Settings className="w-4 h-4 shrink-0" />
+            {!collapsed && <span className="truncate">Settings</span>}
+          </Link>
+        )}
       </nav>
 
       {/* User */}

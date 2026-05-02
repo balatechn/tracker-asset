@@ -210,22 +210,22 @@ export default function DomainTable({
                   <td className="table-td">
                     <div className="flex flex-col gap-0.5 min-w-[130px]">
                       {row.finance_email && (
-                        <span className="flex items-center gap-1 text-[10px] text-blue-700" title={`Finance: ${row.finance_email}`}>
+                        <a href={`mailto:${row.finance_email}`} className="flex items-center gap-1 text-[10px] text-blue-700 hover:text-blue-900 hover:underline" title={`Finance: ${row.finance_email}`}>
                           <Mail className="w-2.5 h-2.5 shrink-0 text-blue-400" />
                           <span className="truncate max-w-[110px]">F: {row.finance_email}</span>
-                        </span>
+                        </a>
                       )}
                       {row.admin_email && (
-                        <span className="flex items-center gap-1 text-[10px] text-purple-700" title={`Admin: ${row.admin_email}`}>
+                        <a href={`mailto:${row.admin_email}`} className="flex items-center gap-1 text-[10px] text-purple-700 hover:text-purple-900 hover:underline" title={`Admin: ${row.admin_email}`}>
                           <Mail className="w-2.5 h-2.5 shrink-0 text-purple-400" />
                           <span className="truncate max-w-[110px]">A: {row.admin_email}</span>
-                        </span>
+                        </a>
                       )}
                       {row.vendor_email && (
-                        <span className="flex items-center gap-1 text-[10px] text-green-700" title={`Vendor: ${row.vendor_email}`}>
+                        <a href={`mailto:${row.vendor_email}`} className="flex items-center gap-1 text-[10px] text-green-700 hover:text-green-900 hover:underline" title={`Vendor: ${row.vendor_email}`}>
                           <Mail className="w-2.5 h-2.5 shrink-0 text-green-400" />
                           <span className="truncate max-w-[110px]">V: {row.vendor_email}</span>
-                        </span>
+                        </a>
                       )}
                       {!row.finance_email && !row.admin_email && !row.vendor_email && (
                         <span className="text-[10px] text-gray-300">—</span>
