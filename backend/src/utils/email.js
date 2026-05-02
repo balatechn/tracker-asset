@@ -10,11 +10,14 @@ function getTransporter() {
   const pass = process.env.EMAIL_PASSWORD || process.env.EMAIL_PASS;
 
   if (!transporter && host && user) {
+    const port = parseInt(process.env.EMAIL_PORT || '587');
     transporter = nodemailer.createTransport({
       host,
-      port: parseInt(process.env.EMAIL_PORT || '587'),
-      secure: false,
+      port,
+      secure: port === 465,     // true only for port 465 (SSL), false for 587 (STARTTLS)
+      requireTLS: port !== 465, // force STARTTLS on port 587
       auth: { user, pass },
+      tls: { rejectUnauthorized: false }, // allow self-signed certs
     });
   }
   return transporter;
