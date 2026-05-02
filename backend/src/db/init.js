@@ -10,13 +10,10 @@ async function initDb() {
     await pool.query(schema);
     console.log('Schema applied.');
 
-    // Add new email columns if they don't exist yet (safe migration)
-    await pool.query(`
-      ALTER TABLE domains
-        ADD COLUMN IF NOT EXISTS finance_email VARCHAR(255),
-        ADD COLUMN IF NOT EXISTS admin_email   VARCHAR(255),
-        ADD COLUMN IF NOT EXISTS vendor_email  VARCHAR(255)
-    `);
+    // Add new email columns if they don't exist yet (safe migration — separate statements)
+    await pool.query(`ALTER TABLE domains ADD COLUMN IF NOT EXISTS finance_email VARCHAR(255)`);
+    await pool.query(`ALTER TABLE domains ADD COLUMN IF NOT EXISTS admin_email   VARCHAR(255)`);
+    await pool.query(`ALTER TABLE domains ADD COLUMN IF NOT EXISTS vendor_email  VARCHAR(255)`);
 
     // Upsert primary admin
     const hash = await bcrypt.hash('Nzt@2025', 12);
