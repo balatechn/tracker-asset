@@ -15,7 +15,7 @@ import { clsx } from 'clsx';
 export default function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
   const [domainsOpen, setDomainsOpen] = useState(true);
 
   const { data: alertsData } = useQuery({
@@ -69,24 +69,27 @@ export default function Sidebar() {
 
         {/* Domains — collapsible group */}
         <div>
-          <button
-            onClick={() => !collapsed && setDomainsOpen(o => !o)}
-            title="Domains"
-            className={clsx(
+          {collapsed ? (
+            <Link href="/domains" title="Domains" className={clsx(
               'flex items-center gap-2.5 px-2 py-1.5 rounded-md text-xs font-medium transition-colors w-full',
-              isActive('/domains')
-                ? 'bg-brand-700 text-white'
-                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-            )}
-          >
-            <Globe className="w-4 h-4 shrink-0" />
-            {!collapsed && (
-              <>
-                <span className="truncate flex-1 text-left">Domains</span>
-                <ChevronDown className={clsx('w-3 h-3 transition-transform', domainsOpen && 'rotate-180')} />
-              </>
-            )}
-          </button>
+              isActive('/domains') ? 'bg-brand-700 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+            )}>
+              <Globe className="w-4 h-4 shrink-0" />
+            </Link>
+          ) : (
+            <button
+              onClick={() => setDomainsOpen(o => !o)}
+              title="Domains"
+              className={clsx(
+                'flex items-center gap-2.5 px-2 py-1.5 rounded-md text-xs font-medium transition-colors w-full',
+                isActive('/domains') ? 'bg-brand-700 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+              )}
+            >
+              <Globe className="w-4 h-4 shrink-0" />
+              <span className="truncate flex-1 text-left">Domains</span>
+              <ChevronDown className={clsx('w-3 h-3 transition-transform', domainsOpen && 'rotate-180')} />
+            </button>
+          )}
           {!collapsed && domainsOpen && (
             <div className="ml-5 mt-0.5 space-y-0.5 border-l border-slate-700 pl-2">
               <Link href="/domains" title="All Domains" className={clsx(
