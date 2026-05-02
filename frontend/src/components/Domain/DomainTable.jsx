@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Search, ChevronUp, ChevronDown, Edit2, Trash2, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
+import { Search, ChevronUp, ChevronDown, Edit2, Trash2, ChevronLeft, ChevronRight, ArrowUpDown, Mail } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { clsx } from 'clsx';
 import toast from 'react-hot-toast';
@@ -78,6 +78,7 @@ export default function DomainTable({
     { label: 'Payment', key: 'payment_method', sortable: false },
     { label: 'Invoice Ref', key: 'invoice_reference', sortable: false },
     { label: 'Remarks', key: 'remarks', sortable: false },
+    { label: 'Contacts', key: 'contacts', sortable: false },
     ...(canEdit ? [{ label: 'Actions', key: 'actions', sortable: false }] : []),
   ];
 
@@ -205,6 +206,31 @@ export default function DomainTable({
                     <span className="text-xs text-gray-500 max-w-[160px] truncate block" title={row.remarks}>
                       {row.remarks || '—'}
                     </span>
+                  </td>
+                  <td className="table-td">
+                    <div className="flex flex-col gap-0.5 min-w-[130px]">
+                      {row.finance_email && (
+                        <span className="flex items-center gap-1 text-[10px] text-blue-700" title={`Finance: ${row.finance_email}`}>
+                          <Mail className="w-2.5 h-2.5 shrink-0 text-blue-400" />
+                          <span className="truncate max-w-[110px]">F: {row.finance_email}</span>
+                        </span>
+                      )}
+                      {row.admin_email && (
+                        <span className="flex items-center gap-1 text-[10px] text-purple-700" title={`Admin: ${row.admin_email}`}>
+                          <Mail className="w-2.5 h-2.5 shrink-0 text-purple-400" />
+                          <span className="truncate max-w-[110px]">A: {row.admin_email}</span>
+                        </span>
+                      )}
+                      {row.vendor_email && (
+                        <span className="flex items-center gap-1 text-[10px] text-green-700" title={`Vendor: ${row.vendor_email}`}>
+                          <Mail className="w-2.5 h-2.5 shrink-0 text-green-400" />
+                          <span className="truncate max-w-[110px]">V: {row.vendor_email}</span>
+                        </span>
+                      )}
+                      {!row.finance_email && !row.admin_email && !row.vendor_email && (
+                        <span className="text-[10px] text-gray-300">—</span>
+                      )}
+                    </div>
                   </td>
                   {canEdit && (
                     <td className="table-td">

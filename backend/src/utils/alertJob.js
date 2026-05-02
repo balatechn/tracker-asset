@@ -7,24 +7,51 @@ async function checkExpiringAssets() {
   const plus30 = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
 
   try {
-    const { rows } = await pool.query(`
-      SELECT 'domain' AS type, domain_name AS name, expiry_date, criticality,
-             (expiry_date - CURRENT_DATE) AS days_remaining
+    // Fetch domains within 30 days — alert EVERY day until renewed
+    const domainRes = await pool.query(`
+      SELECT 'domain' AS type,
+             domain_name AS name,
+             TO_CHAR(expiry_date, 'DD-Mon-YYYY') AS expiry_date,
+             criticality,
+             owner,
+             (expiry_date - CURRENT_DATE) AS days_remaining,
+             finance_email,
+             admin_email,
+             vendor_email
       FROM   domains
-      WHERE  is_active = true AND expiry_date BETWEEN $1 AND $2
-        AND  (expiry_date - CURRENT_DATE) IN (30, 15, 7, 1)
-      UNION ALL
-      SELECT 'software', product_name, expiry_date, criticality,
-             (expiry_date - CURRENT_DATE)
-      FROM   software_licenses
-      WHERE  is_active = true AND expiry_date BETWEEN $1 AND $2
-        AND  (expiry_date - CURRENT_DATE) IN (30, 15, 7, 1)
+      WHERE  is_active = true
+        AND  expiry_date >= $1
+        AND  expiry_date <= $2
       ORDER  BY days_remaining ASC
     `, [today, plus30]);
 
+    // Fetch software licenses within 30 days — alert EVERY day until renewed
+    const softRes = await pool.query(`
+      SELECT 'software' AS type,
+             product_name AS name,
+             TO_CHAR(expiry_date, 'DD-Mon-YYYY') AS expiry_date,
+             criticality,
+             NULL AS owner,
+             (expiry_date - CURRENT_DATE) AS days_remaining,
+             NULL AS finance_email,
+             NULL AS admin_email,
+             NULL AS vendor_email
+      FROM   software_licenses
+      WHERE  is_active = true
+        AND  expiry_date >= $1
+        AND  expiry_date <= $2
+      ORDER  BY days_remaining ASC
+    `, [today, plus30]);
+
+    const rows = [...domainRes.rows, ...softRes.rows].sort(
+      (a, b) => a.days_remaining - b.days_remaining
+    );
+
     if (rows.length > 0) {
-      console.log(`[AlertJob] Found ${rows.length} expiring asset(s) — sending alert`);
+      console.log(`[AlertJob] Found ${rows.length} expiring asset(s) — sending alerts`);
       await sendExpiryAlert(rows);
+    } else {
+      console.log('[AlertJob] No assets expiring within 30 days.');
     }
   } catch (err) {
     console.error('[AlertJob] Error checking assets:', err.message);
@@ -38,7 +65,7 @@ function startAlertJob() {
     checkExpiringAssets();
   });
 
-  console.log('[AlertJob] Scheduled daily at 08:00');
+  console.log('[AlertJob] Scheduled daily at 08:00 — alerts fire every day until assets are renewed');
 }
 
 module.exports = { startAlertJob, checkExpiringAssets };

@@ -9,6 +9,7 @@ const FIELD_DEFAULTS = {
   domain_name: '', registrar: '', expiry_date: '', auto_renew: false,
   owner: 'Balasubramanian P', criticality: 'High', last_renewal_date: '',
   renewal_period: 1, annual_cost_inr: '', payment_method: '', invoice_reference: '', remarks: '',
+  finance_email: '', admin_email: '', vendor_email: '',
 };
 
 export default function DomainModal({ item, onClose, onSaved }) {
@@ -148,6 +149,25 @@ export default function DomainModal({ item, onClose, onSaved }) {
               <label htmlFor="auto_renew" className="text-sm text-gray-700 cursor-pointer">
                 Auto-renew enabled
               </label>
+            </div>
+
+            <div className="sm:col-span-2">
+              <p className="text-xs font-semibold text-brand-700 uppercase tracking-wide mt-1 mb-2">Contact Emails for Renewal Alerts</p>
+            </div>
+
+            <div>
+              <label className="label">Finance Email</label>
+              <input type="email" className="input" placeholder="finance@company.com" {...register('finance_email')} />
+            </div>
+
+            <div>
+              <label className="label">Admin Email</label>
+              <input type="email" className="input" placeholder="admin@company.com" {...register('admin_email')} />
+            </div>
+
+            <div>
+              <label className="label">Vendor Email</label>
+              <input type="email" className="input" placeholder="vendor@registrar.com" {...register('vendor_email')} />
             </div>
           </div>
 

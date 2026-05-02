@@ -85,7 +85,7 @@ const createDomain = async (req, res, next) => {
     const {
       domain_name, registrar, expiry_date, auto_renew, owner, criticality,
       last_renewal_date, renewal_period, annual_cost_inr, payment_method,
-      invoice_reference, remarks,
+      invoice_reference, remarks, finance_email, admin_email, vendor_email,
     } = req.body;
 
     if (!domain_name) return res.status(400).json({ error: 'Domain name is required' });
@@ -94,14 +94,15 @@ const createDomain = async (req, res, next) => {
       `INSERT INTO domains
          (domain_name, registrar, expiry_date, auto_renew, owner, criticality,
           last_renewal_date, renewal_period, annual_cost_inr, payment_method,
-          invoice_reference, remarks, updated_by)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+          invoice_reference, remarks, finance_email, admin_email, vendor_email, updated_by)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
        RETURNING *, (expiry_date - CURRENT_DATE) AS days_to_expiry`,
       [
         domain_name.trim(), registrar || null, expiry_date || null,
         auto_renew || false, owner || 'Balasubramanian P', criticality || 'High',
         last_renewal_date || null, renewal_period || 1, annual_cost_inr || null,
         payment_method || null, invoice_reference || null, remarks || null,
+        finance_email || null, admin_email || null, vendor_email || null,
         req.user.id,
       ]
     );
@@ -124,6 +125,7 @@ const updateDomain = async (req, res, next) => {
       'domain_name', 'registrar', 'expiry_date', 'auto_renew', 'owner',
       'criticality', 'last_renewal_date', 'renewal_period', 'annual_cost_inr',
       'payment_method', 'invoice_reference', 'remarks',
+      'finance_email', 'admin_email', 'vendor_email',
     ];
 
     const sets = [];
@@ -184,7 +186,8 @@ const exportExcel = async (req, res, next) => {
              (expiry_date - CURRENT_DATE) AS days_to_expiry,
              CASE WHEN auto_renew THEN 'Yes' ELSE 'No' END AS auto_renew,
              owner, criticality, TO_CHAR(last_renewal_date,'DD-Mon-YYYY') AS last_renewal_date,
-             renewal_period, annual_cost_inr, payment_method, invoice_reference, remarks
+             renewal_period, annual_cost_inr, payment_method, invoice_reference, remarks,
+             finance_email, admin_email, vendor_email
       FROM   domains WHERE is_active = true ORDER BY sr_no
     `);
 
@@ -204,6 +207,9 @@ const exportExcel = async (req, res, next) => {
       'Payment Method': r.payment_method,
       'Invoice Reference': r.invoice_reference,
       'Remarks': r.remarks,
+      'Finance Email': r.finance_email,
+      'Admin Email': r.admin_email,
+      'Vendor Email': r.vendor_email,
     })));
 
     XLSX.utils.book_append_sheet(wb, ws, 'Domains');
