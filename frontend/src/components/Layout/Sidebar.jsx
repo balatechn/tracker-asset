@@ -7,7 +7,7 @@ import { api } from '@/lib/api';
 import {
   LayoutDashboard, Globe, Monitor, FileText, LogOut, Shield,
   ChevronLeft, ChevronRight, ChevronDown, Bell, Settings, Users,
-  List, AlignLeft, CalendarDays,
+  List, CalendarDays,
 } from 'lucide-react';
 import { useState } from 'react';
 import { clsx } from 'clsx';
@@ -70,7 +70,7 @@ export default function Sidebar() {
         {/* Domains — collapsible group */}
         <div>
           {collapsed ? (
-            <Link href="/domains" title="Domains" className={clsx(
+            <Link href="/domains/calendar" title="Domains" className={clsx(
               'flex items-center gap-2.5 px-2 py-1.5 rounded-md text-xs font-medium transition-colors w-full',
               isActive('/domains') ? 'bg-brand-700 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
             )}>
@@ -97,12 +97,6 @@ export default function Sidebar() {
                 pathname === '/domains' ? 'text-brand-300' : 'text-slate-400 hover:text-white'
               )}>
                 <List className="w-3 h-3 shrink-0" /> All Domains
-              </Link>
-              <Link href="/domains/timeline" title="Timeline View" className={clsx(
-                'flex items-center gap-2 px-2 py-1 rounded text-[11px] font-medium transition-colors',
-                pathname === '/domains/timeline' ? 'text-brand-300' : 'text-slate-400 hover:text-white'
-              )}>
-                <AlignLeft className="w-3 h-3 shrink-0" /> Timeline View
               </Link>
               <Link href="/domains/calendar" title="Calendar View" className={clsx(
                 'flex items-center gap-2 px-2 py-1 rounded text-[11px] font-medium transition-colors',

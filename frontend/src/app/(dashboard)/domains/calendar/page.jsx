@@ -8,7 +8,7 @@ import {
 } from 'date-fns';
 import { clsx } from 'clsx';
 import Link from 'next/link';
-import { Globe, ChevronLeft, ChevronRight, AlignLeft, Table2, CalendarDays, Mail } from 'lucide-react';
+import { Globe, ChevronLeft, ChevronRight, Table2, CalendarDays, Mail } from 'lucide-react';
 
 function dayColor(days) {
   if (days < 0) return 'bg-red-600';
@@ -96,9 +96,6 @@ export default function CalendarPage() {
       <div className="card p-2 flex items-center gap-1 bg-gray-100 rounded-lg w-fit">
         <Link href="/domains" className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium text-gray-600 hover:bg-white transition-colors">
           <Table2 className="w-3.5 h-3.5" /> Table View
-        </Link>
-        <Link href="/domains/timeline" className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium text-gray-600 hover:bg-white transition-colors">
-          <AlignLeft className="w-3.5 h-3.5" /> Timeline View
         </Link>
         <span className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium bg-white shadow-sm text-brand-700">
           <CalendarDays className="w-3.5 h-3.5" /> Calendar View
